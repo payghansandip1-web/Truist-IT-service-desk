@@ -176,6 +176,7 @@
                     <option value="Enterprise Teller">Enterprise Teller</option>
                     <option value="Microsoft Outlook">Microsoft Outlook</option>
                     <option value="Microsoft Teams">Microsoft Teams</option>
+<option value="Cisco Secure Client (VPN)">Cisco Secure Client (VPN)</option>
                     <option value="Virtual Desktop (VDI)">Virtual Desktop (VDI)</option>
                 </select>
             </div>
@@ -202,7 +203,7 @@
             </div>
 
             <div class="info-box">
-                <strong>Escalation Path (Internal Reference Only):</strong>
+                <strong>Escalation Path (check Kb before Escalation):</strong>
                 <div id="escalationText">Select an application and issue to see escalation path.</div>
             </div>
 
@@ -223,23 +224,67 @@
 const knowledgeBase = {
     "Adobe Acrobat": [
         {
-            error: '"Acrobat Trial: You can try this product for # days"',
-            short: 'Adobe Acrobat (Reader / Pro) - error - "Acrobat Trial: You can try this product for # days"',
-            steps: `End all Acrobat processes from Task Manager and relaunch application\nVerify AD group (L-SW-U-Adobe-AcrobatProDC / L-MAC-U-Adobe-AcrobatCDPro)\nIf missing AD group, request Adobe Pro via Approved Software\nClear credentials from Credential Manager (Windows/Web credentials)\nLaunch Adobe Distiller once and close\nSign out and sign back into Adobe Acrobat\nPerform Repair Installation from Help menu\nRestart system and test\nReinstall Adobe Acrobat`,
-            escalation: 'ITSM-Process-SoftwareAssetMgmt (licensing issue)'
-        },
+    error: 'Acrobat Trial: You can try this product for # days',
+    short: 'Adobe Acrobat - Acrobat Trial: You can try this product for # days',
+    steps: `1.	Open Task Manager on the user’s workstation.
+2.	End ALL Adobe Acrobat processes completely (important: ensure no background processes are running).   
+3.	Relaunch Adobe Acrobat and verify the issue.
+4.	If issue persists, close the application and continue.
+5.	Verify AD group permissions:
+	Windows/VDI → L-SW-U-Adobe-AcrobatProDC
+	Mac → L-MAC-U-Adobe-AcrobatCDPro   
+6.	If user does NOT have access:
+	Assist in raising a request for Adobe Acrobat Pro
+	Inform manager approval is required (cost involved)
+	Wait until installation completes
+	Retry application
+7.	Open Credential Manager from Windows search.
+8.	Remove ALL saved credentials under:
+	Windows Credentials
+	Web Credentials   
+9.	Launch Adobe Distiller:
+	Search → “Adobe Distiller”
+	Open and close it (forces license sync)   
+10.	Sign out & sign back in:
+	Open Acrobat
+	Click profile icon → Sign out
+	Sign back in using work email
+	Select correct organization (SunTrust Banks Inc / Truist Acrobat)
+ 1.	Repair Installation:
+	Menu → Help → Repair Installation
+	Confirm repair
+	Restart system after completion   
+1.	Reinstall Adobe Acrobat (full uninstall + reinstall).
+2.	Repeat verification after each step.
+.`,
+    escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT'
+},
         {
-            error: '"License has expired or not been activated"',
-            short: 'Adobe Acrobat (Reader / Pro) - error - "License has expired or not been activated"',
-            steps: `End all Acrobat processes and relaunch\nVerify AD group for Adobe Pro license\nRequest/install Adobe Pro if AD group missing\nClear Credential Manager entries\nLaunch Adobe Distiller and close\nSign out/in Adobe\nRepair installation\nRestart system\nReinstall Acrobat`,
-            escalation: 'ITSM-Process-SoftwareAssetMgmt'
-        },
-        {
-            error: '"A running instance of Acrobat has caused an error"',
-            short: 'Adobe Acrobat (Reader / Pro) - error - "A running instance of Acrobat has caused an error"',
-            steps: `End all Acrobat processes from Task Manager\nRelaunch and verify\nPerform Repair Installation\nRestart system\nReinstall Acrobat`,
-            escalation: 'Generic Software Escalation'
-        },
+    error: 'License has expired or not been activated',
+    short: 'Adobe Acrobat (Reader / Pro) - error - "License has expired or not been activated"',
+    steps: `1.	Open Task Manager → End all Acrobat processes.
+2.	Relaunch application → Verify issue.   
+3.	Check AD group permissions (same as above).
+4.	If missing AD group:
+	Raise request for Acrobat Pro
+	Install software
+	Restart system
+	Verify again
+5.	Open Credential Manager → Delete all credentials.
+6.	Launch Adobe Distiller → Open and close.
+7.	Sign out and sign back in with correct organization.
+8.	Perform Repair Installation → Restart system.
+9.	Reinstall Adobe Acrobat completely.
+10.	Verify after each step.
+`,
+    escalation: 'Escalate to: ITSM-Process-SoftwareAssetMgmt for license sync issues'
+},
+      {
+    error: 'A running instance of Acrobat has caused an error',
+    short: 'Adobe Acrobat (Reader / Pro) - error - "A running instance of Acrobat has caused an error"',
+    steps: `Open Task Manager → End all Acrobat processes.\nRelaunch Acrobat and verify.\nRepair installation:\nMenu → Help → Repair Installation\nRestart system\n\nReinstall Adobe Acrobat fully.\nVerify issue resolution after every step.`,
+    escalation: 'Escalate using Generic Software Escalation'
+},
         {
             error: '"Your request is on its way"',
             short: 'Adobe Acrobat (Reader / Pro) - error - "Your request is on its way"',
@@ -249,7 +294,14 @@ const knowledgeBase = {
         {
             error: 'Failing to load/crashing',
             short: 'Adobe Acrobat (Reader / Pro) - launch/install - failing to load/crashing',
-            steps: `End all Acrobat processes\nReset default browser (Edge)\nRestart system\nLaunch Adobe Distiller\nReinstall Acrobat`,
+            steps: `1.	End all Acrobat processes via Task Manager.
+2.	Reset default browser (Edge typically).   
+3.	Relaunch Acrobat → Verify.
+4.	Restart system → Login → Test again.
+5.	Launch Adobe Distiller → Open & close.
+6.	Reinstall Adobe Acrobat fully.
+7.	Repeat checks after each step.
+`,
             escalation: 'Generic Software Escalation'
         },
         {
@@ -267,7 +319,18 @@ const knowledgeBase = {
         {
             error: 'Unable to combine PDFs',
             short: 'Adobe Acrobat (Reader / Pro) - deviation - Unable to combine PDFs',
-            steps: `Verify user has Acrobat Pro (not Reader)\nEnd Acrobat processes\nDisable “Save as PDF Portfolio” option\nRepair installation\nRestart system\nReinstall Acrobat`,
+            steps: `1.	Verify version:
+	Reader → Not supported
+	Pro → Required   
+2.	If Reader installed → Request Pro.
+3.	End all Acrobat processes.
+4.	Relaunch → Verify.
+5.	Check setting:
+	Combine Files → Options
+	Ensure “Save as PDF Portfolio” is unchecked
+6.	Repair installation → Restart system.
+7.	Reinstall Adobe Acrobat.
+`,
             escalation: 'Generic Software Escalation'
         },
         {
@@ -308,36 +371,214 @@ const knowledgeBase = {
         }
     ],
     "Enterprise Teller": [
-        {
-            error: '"Scanner Connection Error" / "Scanner Reboot Required"',
-            short: 'Enterprise Teller - Check Scanners & Receipt Printers - "Scanner Connection" error',
-            steps: `Verify workstation type (VDI / Windows Desktop) and capture WSID\nCollect scanner & printer serial numbers and update CI in ticket\nCheck network connectivity/configurations (section n644)\nAccess scanner admin GUI via SSE URL (browser test)\nIf loads → capture screenshot and escalate accordingly\nIf not → proceed to network troubleshooting\nRestart INET modem (30 seconds unplug/plug)\nRe-login to ET and test scanning\nRemap scanner/printer if needed`,
-            escalation: 'Admin GUI loads → ITSM-RTAS-CB-EnterpriseTeller\nGUI fails → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nIf still unresolved → ITSM-RTAS-CB-EnterpriseTeller'
-        },
+      {
+    error: 'Scanner Connection Error / Scanner Reboot Required',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - "Scanner Connection Error"',
+    steps: `1.	I captured the error screenshot carefully without including any personal or account information and attached it to the incident ticket.
+2.	I verified the workstation type by checking whether the user is on Branch VDI (Dell Wyse thin client) or Physical Windows desktop, instead of relying on user confirmation.
+3.	I collected the serial number of the scanner (SSE number) and receipt printer (SRNE number) from the asset tag located at the bottom of the devices and updated it as CI in the ticket.
+4.	I entered the scanner SSE number into the browser (example: SSE123456.bbtnet.com) and checked whether the admin GUI is loading.
+	If GUI loads, I attached screenshot and prepared escalation to Enterprise Teller team.
+	If GUI does not load, I attached screenshot and prepared escalation to Teammate Enablement.
+5.	I ensured the user fully signed out of Enterprise Teller using the sign-out button (not Windows X) and closed the application properly.
+6.	I identified the branch router using DX NetOps and checked interface health to locate the INET modem.
+7.	I guided the user to power cycle the modem by unplugging it for 30 seconds and plugging it back in, ensuring lights are ON after reconnect.
+8.	I confirmed the modem is back online in DX NetOps and asked the user to log back into Enterprise Teller and test.
+9.	If issue still persisted, I asked user to remap scanner and printer and test again.
+10.	After completing all steps, if issue still not resolved, I proceeded to escalation.
+`,
+    escalation: 'If GUI loads → Assign to: ITSM-RTAS-CB-EnterpriseTeller\nIf GUI does not load → Assign to: ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nIf modem restart not possible → Assign to: ITSM-ITCD-NetworkSupport'
+},
         {
             error: '"please place item to be scanned in the scanner"',
             short: 'Enterprise Teller - Check Scanners & Receipt Printers - "please place item to be scanned" error',
-            steps: `Fully sign out and close ET correctly\nPower cycle scanner\nRun cleaning mode using cleaner card\nRe-login and test scan\nRestart workstation / reset VDI (based on device type)\nPower cycle printer + scanner and reset printer config\nCheck ET config profile\nRetrieve scanner logs`,
+            steps: `1. captured the screenshot of the error and attached it in ticket ensuring no sensitive data was included.
+2.instructed the user to fully sign out of Enterprise Teller using the sign-out option and ensured the application is properly closed.
+3.powered off the scanner by holding the power button and turned it back on.
+4.initiated cleaning mode by pressing the power button three times and inserted the cleaning waffle card to clean internal scanner path.
+5.verified availability of cleaning card and guided user to order consumab1.	Capture screenshot of the error message and attach it to the incident ticket ensuring no personal or sensitive data is displayed.
+2.	Verify workstation type and confirm whether the device is a Branch VDI or Physical desktop. Record WSID in the ticket.
+3.	Ensure the user signs out of Enterprise Teller properly using the application sign-out option and then closes the application completely.
+4.	Verify network connectivity between workstation and scanner device.
+5.	Check if scanner is properly mapped to the workstation. If not mapped, perform mapping using the Reset Scanner and Receipt Printer tool.
+6.	Power off the scanner device by pressing the power button, wait until it completely shuts down, and power it back on.
+7.	Restart workstation or perform VDI reset depending on workstation type.
+8.	Log back into Enterprise Teller and test scanner functionality.
+9.	If issue persists after all troubleshooting steps, proceed to escalation.
+les if required.
+6.asked user to sign back into Enterprise Teller and test scanning functionality.
+7.If issue persisted, I signed off the user from workstation:
+	For VDI: ended active sessions and performed full VDI reset
+	For Desktop: restarted the workstation
+8.performed device reset:
+	Powered off scanner and printer
+	Unplugged cables for 30 seconds
+	Reset printer configuration using paper feed button
+9.verified printer IP (10.x = online, 192.x = offline)
+10.logged back in and tested again
+11.verified ET config profile configuration and recreated if incorrect
+12.collected scanner logs and attached in ticket
+`,
             escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
         },
         {
             error: '"Scanner Not Enabled"',
             short: 'Enterprise Teller - Check Scanners & Receipt Printers - "Scanner Not Enabled"',
-            steps: `Verify network connectivity/configuration\nFollow network troubleshooting (n644)\nValidate workstation type\nEnsure ET session properly closed`,
+            steps: `1.Capture screenshot of the error message and attach it to the incident ticket ensuring no personal or sensitive data is displayed.
+2.Verify workstation type and confirm whether the device is a Branch VDI or Physical desktop. Record WSID in the ticket.
+3.Ensure the user signs out of Enterprise Teller properly using the application sign-out option and then closes the application completely.
+4.Verify network connectivity between workstation and scanner device.
+5.Check if scanner is properly mapped to the workstation. If not mapped, perform mapping using the Reset Scanner and Receipt Printer tool.
+6.Power off the scanner device by pressing the power button, wait until it completely shuts down, and power it back on.
+7.Restart workstation or perform VDI reset depending on workstation type.
+8.Log back into Enterprise Teller and test scanner functionality.
+9.If issue persists after all troubleshooting steps, proceed to escalation.
+`,
             escalation: 'If unresolved → Standard 3-tier escalation path'
         },
         {
             error: '"Last Item Jammed and Did Not Scan Properly"',
             short: 'Enterprise Teller - Check Scanners & Receipt Printers - "Last Item Jammed"',
-            steps: `Sign out and close ET\nRemove jammed document\nRun cleaning card & compressed air cleaning\nRotate scanner separator (blue triangle)\nEnsure proper document alignment\nRestart workstation / VDI\nPower cycle devices and reset printer\nRetrieve scanner logs`,
+            steps: `1.	Capture screenshot and attach to incident ticket.
+2.	Ensure the user signs out of Enterprise Teller properly and closes application.
+3.	Remove any jammed item by pressing scanner power button briefly or manually pulling item backward carefully.
+4.	Initiate cleaning mode by pressing scanner button multiple times until blinking starts.
+5.	Insert cleaning card repeatedly to remove debris from scanner track.
+6.	Turn off scanner and clean internal track using compressed air if available.
+7.	Rotate internal separator (blue triangle) and reinsert properly to improve feeding mechanism.
+8.	Ensure user feeds items straight and level to avoid further jams.
+9.	Restart workstation or reset VDI session.
+10.	Power cycle printer and scanner and perform printer reset using paper feed button.
+11.	Verify printer connectivity using printed IP address.
+12.	Log back into Enterprise Teller and test scanning functionality.
+13.	If issue persists, retrieve logs and attach to ticket.
+`,
             escalation: 'Tier 1 → Remote Support\nTier 2 → Teammate Enablement\nTier 3 → Enterprise Teller team'
         },
+{
+    error: 'Scanner/Printer not listed when mapping',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - Scanner/Receipt Printer not listed when mapping',
+    steps: `Ensure device is selected using its name (SSE/SRNE), not IP address.\nConfirm device is powered ON and connected to network.\nRestart workstation or reset VDI session.\nCheck network cables and ensure proper connection.\nOpen reset tool and try remapping device again.\nLog back into Enterprise Teller and test.`,
+    escalation: 'Escalate to ET Support or Network team if not resolved'
+},
+{
+    error: 'Devices not powering ON',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - failing to power on',
+    steps: `Check if device power light turns ON when power button is pressed.\nVerify power cables are connected properly to device, adapter, and wall outlet.\nRemove and reconnect all power cables securely.\nTry plugging device into another working outlet or power strip.\nCheck if power strip is ON and working.\nTest device again after reconnecting.`,
+    escalation: 'Replace device or cable as hardware issue'
+},
+
+{
+    error: 'Printing blank receipts',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - printing blank receipts',
+    steps: `Check if correct thermal paper is loaded (one side glossy).\nReplace paper if wrong type is used.\nReload paper correctly with proper direction.\nTry a new paper roll if required.\nPower cycle printer and scanner (unplug 30 seconds).\nPerform printer reset using paper feed button.\nLog back into Enterprise Teller and test printing.`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
+{
+    error: 'OPOS error Code 107/108',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - "OPOS error Code"',
+    steps: `Check if printer paper is empty or missing.\nReplace paper roll with correct type.\nEnsure paper is loaded correctly inside the printer.\nAsk the user to sign out and close Enterprise Teller.\nPower off printer and scanner, unplug for 30 seconds, and reconnect.\nPerform printer reset using paper feed button and follow instructions printed.\nClean inside of printer if required and reload paper.\nLog back in and test printing.`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
         {
             error: '"Receipt printer error"',
             short: 'Enterprise Teller - Check Scanners & Receipt Printers - "receipt printer error"',
-            steps: `Verify paper availability and no jams\nFollow device-type specific steps\nSign out and close ET properly\nRemap printer (VDI)\nCheck network configuration`,
+            steps: `1.	Capture screenshot if error visible and attach to ticket.
+2.	Verify receipt paper is loaded properly and not jammed.
+3.	Ensure user signs out of Enterprise Teller properly and closes the application.
+4.	Verify workstation type and proceed accordingly.
+5.	Remap scanner and receipt printer using reset tool.
+6.	Restart workstation or perform VDI reset.
+7.	Power cycle printer and scanner.
+8.	Reset printer configuration using paper feed option.
+9.	Log back into Enterprise Teller and test printing.
+10.	If issue persists, verify network connectivity and configuration settings
+`,
             escalation: 'Network/config unresolved → escalate via standard 3-tier path'
         },
+
+
+{
+    error: 'Over Cashbox Limit',
+    short: 'Enterprise Teller - cashbox - "Over cashbox limit"',
+    steps: `1.	Capture screenshot of error and attach to incident.
+2.	Run Get-ETAccess script to verify user's assigned AD groups.
+3.	Check if user has required cash limit access group.
+4.	If no group found, guide user to request proper IAM access.
+5.	Ensure proper sign-out of Enterprise Teller and close application.
+6.	Reset Edge browser to clear cached data.
+7.	Perform session reset by logging in without cashbox and signing out again.
+8.	Log back in using correct cashbox.
+9.	Restart workstation or perform VDI reset.
+10.	Verify issue resolution.
+`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
+{
+    error: 'Cashbox cannot be freed',
+    short: 'Enterprise Teller - cashbox - "Cashbox cannot be freed"',
+    steps: `1.	Capture screenshot and attach to ticket.
+2.Inform user that improper sign-out or abrupt shutdown causes session lock.
+3.Ensure proper sign-out from Enterprise Teller using application sign-out option.
+4.Perform session reset by logging in without cashbox and signing out again.
+5.Log back in with correct cashbox number.
+6. reset cashbox using Administration menu.
+7.Reset Edge browser to clear cache.
+8.Repeat login process to free session.
+9.Restart workstation or reset VDI session.
+10.Verify if issue is resolved after all steps
+.`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
+
+{
+    error: 'CSI DLL: Scanner hardware failure',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - "CSI DLL: Scanner hardware failure"',
+    steps: `Verify error and sign out from Enterprise Teller.\nCheck scanner LED status.\nIf blue/purple blinking → replace ink cartridge.\nRestart scanner and test again.\nIf issue persists, verify network connectivity.\nRestart modem if needed.\nLog back in and test scanning.`,
+    escalation: 'Assign to ITSM-RTAS-CB-EnterpriseTeller'
+},
+{
+    error: 'Fail: Disable to use the device. The file or registry key does not exist.',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - "Fail: Disable to use the device. The file or registry key does not exist."',
+    steps: `Verify error and check printer paper.\nReload paper correctly.\nEnsure no paper jam.\nRestart device.\nVerify network connectivity.\nLog in and test.`,
+    escalation: 'Escalate to ET support / network team'
+},
+
+{
+    error: 'red light present on check scanner',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - red light present on check scanner',
+    steps: `Verify scanner error light status.\nCheck network connectivity.\nVerify cables are connected.\nRestart scanner and modem.\nTest again after login.`,
+    escalation: 'Escalate to ET support or network support'
+},
+
+{
+    error: 'scanner is failing to properly read scanned items',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - scanner is failing to properly read scanned items',
+    steps: `Verify issue and sign out of Enterprise Teller.\nClean scanner using cleaning card.\nRemove dust and debris from scanner.\nTest scanning again.\nRestart scanner if needed.\nLog in and re-test.`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
+
+{
+    error: 'Nothing happens when scanning',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - nothing occurs when scanning',
+    steps: `Verify issue and sign out from Enterprise Teller.\nRemap scanner and printer using reset tool.\nLog back in and test scanning.\nIf issue persists, restart workstation or reset VDI.\nCheck network connectivity.\nPower cycle scanner and printer (30 seconds).\nTest again after login.`,
+    escalation: 'Escalate as per kb'
+},
+
+
+{
+    error: 'Scanner Timeout on Pending Document',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - "Scanner Timeout on Pending Document"',
+    steps: `Verify error and check if document is stuck in scanner.\nRemove any paper from scanner if present.\nRestart scanner device.\nCheck scanner connectivity.\nPerform network connectivity check.\nRestart modem if required.\nLog in and test scanning again.`,
+    escalation: 'Escalate to ET support after logs collection'
+},
+
+{
+    error: 'Scanner Ink Cartridge is Low / Missing',
+    short: 'Enterprise Teller - Check Scanners & Receipt Printers - "scanner ink cartridge is low"',
+    steps: `Capture screenshot and attach to ticket.\nEnsure complete sign-out from Enterprise Teller and close application.\nPower off scanner and replace ink cartridge with a new one.\nPower on scanner and verify device readiness.\nLog back into Enterprise Teller and test functionality.\nIf issue persists, perform workstation restart or VDI reset.\nPower cycle both scanner and printer by unplugging for 30 seconds and reconnecting.\nReset printer configuration using paper feed button.\nVerify printer connectivity using printed IP details.\nLog back into Enterprise Teller and verify again.\nRetrieve scanner logs if issue persists.`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
         {
             error: '"Cashbox in use"',
             short: 'Enterprise Teller - cashbox - "Cashbox in use"',
@@ -380,10 +621,34 @@ const knowledgeBase = {
             steps: `Verify ID validity (not expired, correct type)\nEnsure proper placement/alignment\nRetry scan\nClean scanner\nTry alternate orientation\nRetrieve logs`,
             escalation: 'Single ID → manual entry & close\nMultiple IDs issue → ITSM-TSD-IT-TEAMMATE-ENABLEMENT'
         },
+{
+    error: 'Checking Browser Requirements',
+    short: 'Enterprise Teller - login/launch - "Checking Browser Requirements"',
+    steps: `1.	Capture screenshot and attach to ticket.
+2.	Ensure proper sign-out of Enterprise Teller and close application.
+3.	Reset Edge browser completely.
+4.	Restart workstation or reset VDI session.
+5.	Verify Forcepoint DLP configuration if on desktop:
+•	Confirm profile is set to default
+•	Verify version is updated
+6.	Log back into Enterprise Teller and verify issue resolution.
+`,
+    escalation: 'If Forcepoint issue → ITSM-CCS-CA-DataLossPrevention\nOtherwise:\nTier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-RTAS-CB-EnterpriseTeller'
+},
+
         {
             error: '"Enterprise Teller Install in Progress"',
             short: 'Enterprise Teller - login/launch - "Install in Progress"',
-            steps: `Refresh Software Center policies\nCheck install status\nRestart device\nAllow up to 1 hour for install`,
+            steps: `1.	Open Control Panel and launch Configuration Manager.
+2.	Run Machine Policy Retrieval & Evaluation Cycle.
+3.	Run Application Deployment Evaluation Cycle.
+4.	Wait for Software Center refresh.
+5.	Open Software Center and check ET installation status.
+6.	If failed, restart workstation and retry installation.
+7.	If still installing, allow system to complete installation.
+8.	Restart workstation again if required.
+9.	Verify application launches successfully.
+`,
             escalation: 'If failed twice/unresolved → Tier 1 → Tier 3 escalation'
         }
     ],
@@ -391,7 +656,31 @@ const knowledgeBase = {
         {
             error: '"Missing emails/folders"',
             short: 'Microsoft Outlook - emails - Missing emails/folders',
-            steps: `Check folder collapse/expand arrows to ensure folders are visible\nClear filters (View → View Settings → Filter → Clear All)\nCheck Online Archive for moved emails\nVerify retention policy via BEAT tool\nCheck emails in Outlook Webmail\nRestore from Deleted Items / Recover Deleted Items\nNon-persistent VDI: reset VDI → rebuild profile\nWindows/Persistent VDI: reset view → rebuild Outlook profile\nRun Outlook.exe /resetnavpane\nRun Outlook.exe /safe and restart Outlook\nRestart system and reconnect VPN\nRepair/reinstall Office`,
+            steps: `1.Confirm basic visibility issues:
+  1.1 Check if folders are collapsed → Expand using arrow icon.
+  1.2 Verify filters: - Go to View → View Settings → Filter- Click Clear All → OK
+2.Check Online Archive: 2.1 Scroll navigation pane → Look for Online Archive
+  2.2 If emails found: - Right-click original folder → Properties → Policy tab
+- Ensure "Use Parent Folder Policy" is selected
+3.Verify Retention Policy: 3.1 Go to BEAT user info
+  3.2 Check if archive policy exists
+  3.3 If yes → Emails auto move to archive (cannot change)
+4.Check Webmail:
+  4.1 Login: https://outlook.office.com
+  4.2 Verify if emails exist
+5.If emails missing in Webmail:
+  5.1 Check Deleted Items
+  5.2 Use Recover Deleted Items
+  5.3 Restore if available
+  5.4 If not available → Not recoverable
+6.Identify workstation type (Windows / VDI)
+7.For Windows / Persistent VDI: 7.1 Reset View settings
+  7.2 Rebuild Outlook profile
+  7.3 Run: - Outlook.exe /resetnavpane
+           - Outlook.exe /safe
+  7.4 Restart system
+  7.5 Repair/reinstall Office
+`,
             escalation: 'If issue in Webmail → ITSM-Collaboration-ExchangeAndEmailSecurity (include email details)\nIf device-specific → Software Escalation'
         },
         {
@@ -403,7 +692,26 @@ const knowledgeBase = {
         {
             error: '"An internal support function returned an error"',
             short: 'Microsoft Outlook - emails - "An internal support function returned an error"',
-            steps: `Test sending email via Webmail\nCheck for invalid/duplicate email addresses\nSend emails individually to isolate issue\nNon-persistent VDI: reset + rebuild profile\nWindows: reset view → rebuild profile → resetnavpane → safe mode → restart → repair Office`,
+            steps: `1.Test in Webmail:
+   1.1 Send same email via Webmail
+2.If issue occurs in Webmail: 2.1 Check recipient list
+   2.2 Remove all addresses
+   2.3 Add recipients one by one
+   2.4 Identify invalid/duplicate email
+3.If works in Webmail: 
+   3.1 Issue is Outlook local
+4.Identify workstation type
+5.For Windows: 
+   5.1 Reset View settings
+   5.2 Rebuild profile
+   5.3 Run: - Outlook.exe /resetnavpane
+            - Outlook.exe /safe
+   5.4 Restart system
+   5.5 Repair/reinstall Office
+6.For VDI:
+   6.1 Reset VDI
+   6.2 Rebuild profile
+`,
             escalation: 'If issue in Webmail → ITSM-Collaboration-ExchangeAndEmailSecurity\nOtherwise → Software Escalation'
         },
         {
@@ -421,13 +729,60 @@ const knowledgeBase = {
         {
             error: 'Failing to receive emails',
             short: 'Microsoft Outlook - emails - Failing to receive emails',
-            steps: `Check Metered Connection warning\nVerify if sender gets block notification\nCheck Webmail\nCheck quarantine (Proofpoint)\nDisable Outlook rules\nNon-persistent VDI: reset + rebuild profile\nWindows: reset view → rebuild profile → resetnavpane → safe mode → restart → repair Office`,
+            steps: `1.Check Metered Connection:
+   1.1 Disable from Network settings
+2.Verify blocked emails: 
+    2.1 Check InfoSec / Email Gateway alerts
+3.Identify mailbox type:
+	Personal
+	Group
+	Distribution list
+4.Check Webmail:
+    4.1 If missing → Continue troubleshooting
+5.Check Quarantine: 
+    5.1 Open Proofpoint
+    5.2 Release emails if found
+6.Disable rules: 
+    6.1 Go to Webmail settings
+    6.2 Disable all rules
+    6.3 Send test email
+7.Check Distribution List permissions: 
+    7.1 Ensure External allowed
+8.Perform system troubleshooting: For Windows:
+	Reset View
+	Rebuild profile
+	Safe mode
+	Restart
+10] Online Repair -control Pannal >Programs and Features> Microsoft Office 365> right click >Click Change>Online Repair → click Repair
+For VDI:-Reset VDI
+ 	 Rebuild profile
+`,
             escalation: 'If issue in Webmail → ITSM-Collaboration-ExchangeAndEmailSecurity\nIf rules/quarantine issues unresolved → escalate with sender details'
         },
+
+{
+    error: 'Emails deleted by accident',
+    short: 'Microsoft Outlook - emails - restore deleted items',
+    steps: `Identify mailbox type: 1.1 Personal mailbox\n1.2 Shared mailbox\nCheck Deleted Items folder: 2.1 Open Outlook\n2.2 Navigate to Deleted Items\n2.3 Search for deleted email\n2.4 Move back to original folder\nIf not found: 3.1 Click Folder tab\n3.2 Select Recover Deleted Items\n3.3 Maximize window\n3.4 Select emails\n3.5 Click Restore\nImportant checks: 4.1 Ensure checkbox “Restore selected items” is selected\n4.2 Do NOT click purge (permanent deletion)\nIf emails not available: 5.1 Check if 30 days passed\n5.2 Confirm retention policy\nFor multiple emails: 6.1 Use Outlook Web\n6.2 Use “Recover items deleted from this folder”`,
+    escalation: 'If not found → No recovery possible\nNo escalation (system limitation)'
+},
         {
             error: '"Cannot start Outlook"',
             short: 'Microsoft Outlook - Launch/Login - "Cannot start Outlook"',
-            steps: `Cannot start Outlook\nUpdate Outlook\nDisable Metered Connection\nClear credentials (Credential Manager)\nReset view settings\nRebuild Outlook profile\nRun Outlook.exe /resetnavpane\nRun Outlook.exe /safe\nRestart system\nRepair/reinstall Office`,
+            steps: `1.Close all Office apps
+2.Update Outlookor or any office app : File → Office Account → Update
+3.Disable Metered connection
+4.Clear Credentials:
+	Open Credential Manager
+	Remove all Generic Credentials
+5.Reset View
+6.Rebuild profile
+7.Run commands:
+	Outlook.exe /resetnavpane
+	Outlook.exe /safe
+8.Restart system
+9.Repair Office- Repair -control Pannal >Programs and Features> Microsoft Office 365> right click >Click Change>Online Repair → click Repair
+`,
             escalation: 'If persists → Software Escalation'
         },
         {
@@ -454,6 +809,26 @@ const knowledgeBase = {
             steps: `Verify mailbox permissions (Access For)\nConfirm mailbox exists\nRequest access if required\nNon-persistent VDI: reset + rebuild profile\nWindows: reset view → rebuild profile → resetnavpane → safe mode → restart → repair`,
             escalation: 'If mailbox deleted → no recovery\nOtherwise → Software Escalation'
         },
+
+{
+    error: 'We Can\'t Connect You (HTTP 404)',
+    short: 'Microsoft Outlook - Launch/Login - "We Can\'t Connect You (HTTP 404)"',
+    steps: `Sign out of Outlook\nSign back in\nClose all apps\nReopen Outlook\nIf issue persists:\n- Reset View\n- Rebuild profile\n- Safe mode\n- Restart\n- Online Repair - Control Panel > Programs and Features > Microsoft Office 365 > right click > Click Change > Online Repair → click Repair`,
+    escalation: 'Follow Software Escalation'
+},
+{
+    error: 'Couldn\'t verify account',
+    short: 'Microsoft Outlook - Launch/Login - "Couldn\'t Verify Account"',
+    steps: `Check AD group:\n- AAG-M365-LIC-E5\n\nIf not present:\n- Stop troubleshooting\n\nIf present:\nPerform full troubleshooting:\n- Reset view\n- Rebuild profile\n- Safe mode\n- Restart\n- Online Repair - Control Panel > Programs and Features > Microsoft Office 365 > right click > Click Change > Online Repair → click Repair`,
+    escalation: 'Assign to:\nITSM-Collaboration-M365'
+},
+
+{
+    error: 'Unlicensed Product',
+    short: 'Microsoft Outlook - Launch/Login - "Unlicensed Product"',
+    steps: `Check AD groups:\n- AAG-M365-LIC-OAPPS\n- AAG-M365-LIC-E5\n\nIf missing: 2.1 Cannot proceed\nIf present:\nPerform full troubleshooting:\n- Update Office\n- Disable metered\n- Clear credentials\n- Reset view\n- Rebuild profile\n- Safe mode\n- Restart\n- Online Repair - Control Panel > Programs and Features > Microsoft Office 365 > right click > Click Change > Online Repair → click Repair`,
+    escalation: 'If license missing → ITSM-Collaboration-M365'
+},
         {
             error: 'Add-in disabled',
             short: 'Microsoft Outlook - Add-ins - Disabled add-in',
@@ -463,7 +838,18 @@ const knowledgeBase = {
         {
             error: 'Emails older than 3 months not visible',
             short: 'Microsoft Outlook - Group mailbox - Emails older than 3 months not visible',
-            steps: `Check if user is part of AD group G-App-Outlook-SharedMailoxCaching\nIf yes → request removal from AD group\nWait 4 hours for update\nDelete registry key SharedMailboxCacheEnabled\nRestart system\nRebuild Outlook profile`,
+            steps: `1.	Verify issue: 1.1 Check if all emails older than 3 months are missing
+2.	Check AD group: 2.1 Look for G-App-Outlook-SharedMailoxCaching
+3.	If user is part of group: 3.1 Inform user: - Webmail can show emails
+4.	If user needs fix: 4.1 Remove AD group using BEAT
+       4.2 Wait 4 hours
+5.	Perform registry fix: 5.1 Open Registry Editor
+       5.2 Navigate: Computer\HKEY_CURRENT_USER\SOFTWARE\Truist
+       5.3 Delete key: SharedMailboxCacheEnabled
+6.	Restart system
+7.	Rebuild Outlook profile
+8.	Verify emails appear
+`,
             escalation: 'Tier 1 → Warm transfer to Remote Support\nIf needed → Exchange/Support team'
         },
         {
@@ -567,7 +953,18 @@ const knowledgeBase = {
         {
             error: '"Your account is blocked"',
             short: 'Microsoft Teams - Error: "Your account is blocked"',
-            steps: `Reset Teams app (Windows/persistent VDI → KB reset steps / non‑persistent VDI → full VDI reset)\nRestart workstation and re-login\nVerify issue after login`,
+            steps: `1.I initiated troubleshooting by resetting the Microsoft Teams application.
+         •	Verified the device type with the user.
+         •	If the user is on a Windows laptop, desktop, or persistent VDI, I followed Teams reset steps using the standard reset process (KB0191200 section qvpy).
+         •	If the user is on a non-persistent VDI, I performed a full VDI reset as per KB0200785.
+         •	After completing the reset, I asked the user to launch Microsoft Teams again and verified whether the issue is resolved.
+         •	The issue persisted after the reset.
+2.	I proceeded to restart the user's workstation.
+         •	Instructed the user to save work and perform a full restart.
+         •	After login, I asked the user to open Microsoft Teams again.
+         •	Verified if the error still appears.
+         •	The issue continued after the restart.
+`,
             escalation: 'Escalate to ITSM-InfoSec-Azure-IAM-Operations'
         },
         {
@@ -677,49 +1074,177 @@ const knowledgeBase = {
         {
             error: '"copy / paste is not working"',
             short: 'Virtual Desktop (VDI) - misc. - copy / paste is not working',
-            steps: `Identify VDI type (PD/ND/PDU/NDU) and environment\nLogin to Citrix Director (prod/dev based on VDI)\nCheck Policies tab → verify EXTERNAL ACCESS policies\nIf external access → expected behavior (vendor device restriction)\nIf internal → reset/reinstall Citrix Workspace\nRetest copy/paste`,
+            steps: `1.	Identify VDI type (PD/ND)
+2.	Open Director
+3.	Check policies under session: 
+o	If EXTERNAL ACCESS policy → copy/paste disabled
+4.	If no restriction → issue with Citrix
+5.	Reinstall Citrix Workspace
+`,
             escalation: 'Tier1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT'
         },
+{
+    error: 'Client could not connect to the desktop within the specified time',
+    short: 'Virtual Desktop (VDI) - launch - "Connection failed because Client could not connect to the desktop within the specified time"',
+    steps: `Issue related to Citrix Workspace\ Reinstall Citrix Workspace\nRestart system\nRetry login`,
+    escalation: 'If persists → ITSM-TSD-IT-TEAMMATE-ENABLEMENT'
+},
+
+{
+    error: 'Machine is not functional',
+    short: 'Virtual Desktop (VDI) - launch - "Connection failed because the machine is not functional"',
+    steps: `Identify VDI\nOpen Director\nRestart VDI\nWait for complete reboot\nRetry login`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-VDI SUPPORT'
+},
+{
+    error: 'Connection failed because the VDA failed to register with the delivery controller within a specified time',
+    short: 'Virtual Desktop (VDI) - launch - "Connection failed because the VDA failed to register with the delivery controller within a specified time"',
+    steps: `Identify VDI\nOpen Director\nRestart VDI\nWait for registration\nRetry login\nReinstall Citrix`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-VDI SUPPORT'
+},
+
+{
+    error: 'Connection failed because there is no machine available to launch',
+    short: 'Virtual Desktop (VDI) - launch - "Connection failed because there is no machine available to launch"',
+    steps: `Open Director\nVerify machine availability\nCheck machine pool capacity\nAttempt allocation manually`,
+    escalation: 'Contact Advanced Operations (OPS Chat)\nIf unresolved → ITSM-VDI SUPPORT'
+},
+
+{
+    error: 'Detected Unauthorized Device Type, Logon Denied',
+    short: 'Virtual Desktop (VDI) - launch - "Detected Unauthorized Device Type, Logon Denied"',
+    steps: `Check AD groups:\n- G-App-ContractorOffshoreChromebookEnable-Users\n\nIf unauthorized AD group exists:\n- Remove AD group via request\n\nSubmit AD group removal request\nWait 2–4 hours for completion\nRetry login\n\nFor Chromebook users:\n- Ensure required AD group is added\n\nVerify Citrix Workspace usage (not browser)`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT'
+},
+{
+    error: 'Black screen',
+    short: 'Virtual Desktop (VDI) - launch - stuck on black screen, no error',
+    steps: `Identify VDI type\nOpen Director\nRestart VDI\nWait for full boot\nRetry login`,
+    escalation: 'Tier 1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier 2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier 3 → ITSM-VDI SUPPORT'
+},
         {
             error: '"Low Disk Space"',
             short: 'Virtual Desktop (VDI) - misc. - Low Disk Space',
-            steps: `Open Storage Settings → enable Storage Sense\nRemove unused apps / raise request for removal\nDelete Temporary files from settings\nClear %temp% folder (select all → delete → skip locked files)\nRun OneDrive “Free up space”\nRun cleanmgr /sageset and /sagerun\nDelete CrashDumps folder\nRebuild Indexing\nMove large files (>5GB) to OneDrive root`,
+            steps: `1.	Open Storage Settings
+2.	Enable Storage Sense
+3.	Analyze usage: 
+o	Apps
+o	Temp files
+4.	Delete temporary files
+5.	Clean %temp% folder
+6.	Run disk cleanup commands: 
+o	cleanmgr /sageset:1
+o	cleanmgr /verylowdisk /sagerun:1
+7.	Clear Crash Dumps
+8.	Move large OneDrive files
+9.	Free OneDrive space
+10.	Remove Unwonted Software 
+11.	If still need more Storage create CSR for modify VDI
+`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier3 → ITSM-VDI SUPPORT'
         },
         {
             error: '"Login Failed, Try Again or Contact Help Desk"',
             short: 'Virtual Desktop (VDI) - login - "Login Failed, Try Again or Contact Help Desk"',
-            steps: `Check RSA authentication logs\nValidate successful token entries\nCheck account status (locked/expired/sabbatical) in PowerShell\nReset/unlock password if required\nValidate correct login method (updated URLs)`,
+            steps: `1.	Open RSA Console and verify user authentication logs.
+2.	Check “Recent Authentication Activity”: 
+o	If Authentication Method Success present → proceed
+o	If not → user entering wrong token → troubleshoot RSA
+3.	Open PowerShell and verify account status: 
+o	Check if password expired
+o	Check if account locked
+o	Check if account disabled
+o	Check if user on sabbatical
+4.	If errors found: 
+o	Reset password
+o	Unlock account
+o	Enable account
+5.	Confirm user is accessing VDI via approved URL (NOT old/deprecated URLs).
+6.	Ask user to restart system and retry login
+)`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT'
         },
         {
             error: '"Gateway Timeout"',
             short: 'Virtual Desktop (VDI) - login - "Gateway Timeout"',
-            steps: `Confirm user is on vendor workstation\nEnsure vendor VPN is connected\nRetry accessing partner URL\nIf still failing → vendor must whitelist site / update firewall`,
+            steps: `1.	Confirm user is using vendor workstation.
+2.	Ask user to connect to vendor VPN.
+3.	Try opening partners portal again.
+4.	If still not working: 
+	Check VPN routing
+	Verify IP routing through vendor network
+5.	Confirm firewall allows access to partner sites.
+6.	Users must contact Vendor Help desk for VPN/Firewall issue
+`,
             escalation: 'Vendor support (primary)\nNo internal fix beyond guidance'
         },
         {
             error: '"Unapproved Access"',
             short: 'Virtual Desktop (VDI) - login - "Unapproved Access"',
-            steps: `Verify correct URL (partners vs deprecated links)\nConfirm vendor workstation + VPN\nValidate firewall/whitelisting\nCheck third-party communication link setup`,
+            steps: `1.	Verify which Citrix URL user is using.
+2.	Check if user is using deprecated URLs: 
+	bbtapps.bbt.com
+	portal.truist.com
+        If yes → inform these are disabled
+3.	Ask user to use partners URL: 
+	bbtappspartners.bbt.com
+4.	Verify workstation type: 
+	Vendor workstation OR Truist workstation
+5.	If vendor workstation: 
+	Ensure VPN is connected
+	Retry login , if 1st time login check VDI request status  
+6.	If still failing: 
+	VPN not configured properly
+	Firewall blocking access
+7.	Ask user to contact vendor IT to whitelist URLs and configure VPN
+8.	If required, check supplier communication link setup
+`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier3 → ITSM-VDI SUPPORT'
         },
         {
             error: '"Cannot start desktop"',
             short: 'Virtual Desktop (VDI) - launch - "Cannot start desktop"',
-            steps: `Identify VDI type & name\nLogin to Director (prod/dev/DR)\nCheck system message\nFollow respective error path\nRestart VDI\nRetest login`,
+            steps: `
+1.	Identify VDI type: 
+               Persistent (PD) or
+                Non-persistent (ND)
+2.	Get VDI name
+3.	Open Director portal (Prod/Dev/DR based on VDI type)
+4.	Locate user session
+5.	Check error message in Director
+6.	Document Vcenter details
+7.	Restart VDI 
+8.	Ask user to login again check on Director if Register but still not open ask user reinstall citrix 
+`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier3 → ITSM-VDI SUPPORT'
         },
         {
             error: 'There are no apps or desktops available',
-            short: 'Virtual Desktop (VDI) - launch - no VDIs available',
-            steps: `Check if Dev VDI accessed via browser (not Workspace)\nVerify VDI request in ServiceNow\nCheck request status (Approval / Completed)\nValidate correct environment access\nConfirm provisioning`,
+            short: 'Virtual Desktop (VDI) - There are no apps or desktops available',
+            steps: `1.	Confirm environment (Prod / Dev).
+2.	Check if user is using correct access method 
+	Dev VDIs → Browser only
+3.	Check RITM request status: 
+	Waiting for Approval
+	Approved
+	Completed
+4.	Verify environment assigned in request
+5.	Ask user to login to correct environment check URL
+`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier3 → ITSM-VDI SUPPORT'
         },
         {
             error: '"Temporarily unavailable due to planned maintenance"',
             short: 'Virtual Desktop (VDI) - launch - maintenance mode',
-            steps: `Check active INC tickets\nVerify if maintenance intentional\nDisable maintenance mode in Director\nRestart VDI\nRetest`,
+            steps: `1.	Identify VDI type and name
+2.	Open Director check VDI Name 
+3.	Check Maintenance Mode status
+4.	Verify if user has any open tickets
+5.	If no active work: 
+	Turn OFF maintenance mode
+6.	Restart VDI from Director
+7.	Retry login 
+`,
             escalation: 'Assign to ITSM-VDI SUPPORT'
         },
         {
@@ -740,9 +1265,22 @@ const knowledgeBase = {
             steps: `Check mute and volume\nVerify correct audio device\nCheck Citrix Preferences (audio redirection)\nTest sound in app and browser by male test call \nfor test call open app > open setting > device > test call\nRestart VDI\ncheck on director teams optimize status \nif no optimize reinstall citrix`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier3 → ITSM-VDI SUPPORT'
         },
+{
+    error: 'Cannot Create a Secure Connection in This Browser',
+    short: 'Virtual Desktop (VDI) - login - "Cannot Create a Secure Connection in This Browser" error',
+    steps: `Open Citrix Storefront\nClick Settings → Change Citrix Workspace App\nSelect “Detect Citrix Workspace app”\nAllow launcher in browser popup\nIf popup not shown:\nReset Citrix Workspace\n\nReset process:\nGo to system tray\nRight-click Citrix\nTroubleshooting → Reset App Data\n\nRestart system\nRetry login`,
+    escalation: 'Tier1 → ITSM-TSD-IT-REMOTE-SUPPORT\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT'
+},
+
+{
+    error: 'User has not been granted the requested logon type',
+    short: 'Virtual Desktop (VDI) - launch - "Login Failure: The user has not been granted the requested logon type at this computer"',
+    steps: `Check AD group for user\nVerify if G-IAM-Restrictive-Logon exists\nIf present:\nUser is restricted\n\nInform user to contact manager\nManager must update Workday/Fieldglass\nWait up to 24 hours for sync\nConfirm access again`,
+    escalation: 'If not removed after 24 hours → Assign to ITSM-InfoSec-IAM'
+},
         {
             error: 'Custom / Unknown (VDI)',
-            short: 'Virtual Desktop (VDI) - UNDC - ("exact issue")',
+            short: 'Virtual Desktop (VDI) -  ("exact issue")',
             steps: `Capture exact error\nCheck RSA / account status\nVerify VPN / access method\nReset Citrix Workspace\nReset browser\nRestart VDI`,
             escalation: 'Tier1 → Warm transfer\nTier2 → ITSM-TSD-IT-TEAMMATE-ENABLEMENT\nTier3 → ITSM-VDI SUPPORT'
         }
@@ -815,8 +1353,8 @@ Short Description  : ${shortDesc}
 
 [TROUBLESHOOTING STEPS PERFORMED]
 ${tsSteps}
-==================================================
-G
+
+
 ==================================================`;
 
     document.getElementById('outputTemplate').value = template;
