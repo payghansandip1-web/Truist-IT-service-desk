@@ -1,5 +1,3 @@
-# Truist-IT-service-desk-
-Truist IT Service Desk Template Generator
 <!DOCTYPE html>
 <html lang="en">
 <head>
