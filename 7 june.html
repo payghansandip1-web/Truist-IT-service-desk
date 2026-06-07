@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -205,6 +205,13 @@
             <div class="info-box">
                 <strong>Escalation Path (check Kb before Escalation):</strong>
                 <div id="escalationText">Select an application and issue to see escalation path.</div>
+            </div>
+           
+           <div class="info-box">
+                <strong>resolution note (check befor add):</strong>
+                (Editable)</h2> <input type="text" id="targetApp" ${tsSteps}
+resolution note (check befor add>
+                
             </div>
 
             <button class="btn" onclick="generateTemplate()">Generate Automatic Template</button>
@@ -949,6 +956,120 @@ For VDI:-Reset VDI
             escalation: 'Software Escalation'
         }
     ],
+
+
+
+
+
+    "Cisco Secure Client (VPN)": [
+
+{
+    error: 'Login Denied. You are not authorized to access remote access',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - "Login Denied. You are not authorized to access remote access" error',
+    steps: `Identify user location:\n1.1 Ask if user is in US or Offshore\n\nIf User is Onshore:\n2.1 Issue is due to router using offshore DNS\n2.2 Inform user: Router configured to offshore region\n2.3 Action: User must contact ISP to reset router to US region\n\nIf User is Offshore:\nCheck AD group:\n4.1 Open Active Directory\n4.2 Search user by username\n4.3 Click "Member Of" tab\n4.4 Verify presence of:\n- G-App-RiskAcceptIntTravelerGeoLocation-VPN-Users\n- OR\n- G-App-ExclusionIntTravelerGeoLocation-VPN-Users\n\nIf AD group NOT present:\n5.1 Ask user/manager to raise international travel request\n5.2 Wait for approval\n\nIf AD group present:\n6.1 Restart laptop\n6.2 Connect VPN from login screen`,
+    escalation: 'Warm transfer to Ops if AD group exists but issue persists\nIf no permissions → user must raise access request'
+},
+{
+    error: "Your Network Administrator Doesn't Allow Simultaneous Connections",
+    short: 'Cisco Secure Client (VPN) - login / connection issues - simultaneous connection not allowed',
+    steps: `Check connections:\n1.1 Ensure ethernet cable removed\n\nRestart system\n\nConnect VPN at login screen\n\nLogin system\n\nClose VPN\n\nEnable hidden files\n\nNavigate Cisco folder\n\nDelete files\n\nRestart again\n\nRetry`,
+    escalation: 'If persists → reinstall VPN\nOps escalation'
+},
+
+
+{
+    error: 'No modules found',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - no modules found',
+    steps: `Open Software Center\n\nCheck Cisco installation:\n2.1 If pending → install\n\nRestart system\n\nConnect VPN\n\nClose VPN\n\nEnable hidden files\n\nDelete Cisco AppData files\n\nRestart\n\nRetry connection`,
+    escalation: 'If persists → reinstall VPN\nOps escalation'
+},
+{
+    error: 'The service provider in your location is restricting access',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - network restriction / splash page issue',
+    steps: `Identify location:\n- US / Outside US\n\nUS users:\n2.1 Open browser\n2.2 Enter IP:\n- 74.120.65.240\n- OR 74.120.65.245\n\nComplete splash page\n\nIf not working:\n4.1 Clear browser cache\n4.2 Retry\n\nNon-US users:\n5.1 Open new website\n5.2 Trigger splash page\n\nRetry VPN`,
+    escalation: 'Contact location support (hotel/airport)\nNo internal escalation'
+},
+
+{
+    error: 'VPN keeps disconnecting and reconnecting',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - disconnecting and reconnecting',
+    steps: `Restart router + laptop\n\nRun CMD:\nping -t google.com\n\nMonitor 1 minute:\n- If request timed out → Internet unstable\n- If stable → Continue\n\nUpdate drivers (if office access available)\n\nRestart again\n\nClose VPN\n\nDelete Cisco files\n\nRestart\n\nRetry VPN`,
+    escalation: 'If repeated → escalate\nIf driver issue → update required\nIf unresolved → reinstall VPN'
+},
+
+{
+    error: 'Login Failed',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - "login failed" error',
+    steps: `Confirm issue scope:\n1.1 Ask user if error appears within Cisco Secure Client (VPN).\n1.2 Confirm it is not BitLocker / Windows login / no boot issue.\n\nVerify RSA Token:\n2.1 Ask user to check RSA token is active.\n2.2 Verify correct passcode entered.\n2.3 Ensure token is not expired.\n\nRestart workstation (mandatory step repeated):\n3.1 Click Start\n3.2 Select Power\n3.3 Click Restart\n3.4 Wait for system boot\n\nConnect VPN from login screen:\n4.1 Press CTRL + ALT + DEL\n4.2 Click network icon (bottom right)\n4.3 Launch Cisco Secure Client\n4.4 Enter VPN: Truistweb.truist.com\n4.5 Enter credentials\n\nIf still fails:\n5.1 Ask user to log in normally\n5.2 Restart again and retry`,
+    escalation: 'Follow RSA token troubleshooting KB\nIf unresolved → escalate to Service Desk / authentication team'
+},
+{
+    error: 'VPN Connection failed due to Unsuccessful Domain Name Resolution',
+    short: 'Cisco Secure Client (VPN) -VPN Connection failed due to Unsuccessful Domain Name Resolution',
+    steps: `Check VPN entry:\n1.1 Verify Truist VPN present\n1.2 Add manually if missing\n\nRestart router + laptop (sequence strict)\n\nVerify internet\n\nOpen CMD\n\nRun commands:\n- ipconfig /release\n- ipconfig /renew\n- ipconfig /flushdns\n\nRestart system\n\nRun nslookup:\n- nslookup truistweb.truist.com\n\nIf DNS fails:\n→ Contact ISP\n\nDelete AppData Cisco files\n\nRestart system\n\nRetry VPN`,
+    escalation: 'Tier 1 → Remote Support\nIf network containment suspected → CIRT team\nElse → reinstall VPN'
+},
+
+{
+    error: 'Posture Assessment Failed: Hostscan Csd Prelogin Verification Failed',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - posture assessment failed',
+    steps: `Restart system\nConnect from login screen\nLogin system\nClose VPN\nEnable hidden files\nNavigate Cisco folder\nDelete files:\n- HostScan\n- Secure Client\n\nRestart again\nConnect VPN again\nTry URLs:\n- Truistweb.truist.com\n- Truistweb2.truist.com`,
+    escalation: 'If persists → reinstall VPN\nOps escalation'
+},
+{
+    error: 'Connection Failed, the Local Network May Not Be Trustworthy',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - local network not trustworthy',
+    steps: `Explain root cause:\n- Router/modem issue\n\nRestart devices:\n2.1 Turn OFF router\n2.2 Turn OFF laptop\n2.3 Turn ON router (wait 3 minutes)\n2.4 Turn ON laptop\n\nRetry VPN\n\nIf persists:\n4.1 Try alternate network\n4.2 Try hotspot`,
+    escalation: 'No internal troubleshooting allowed for router\nUser must contact ISP'
+},
+
+
+
+{
+    error: 'Login denied: You Do Not Have Privileges to Access Resources Remotely',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - "Login denied: You Do Not Have Privileges to Access Resources Remotely" error',
+    steps: `Verify AD group:\n1.1 Open Active Directory\n1.2 Search user\n1.3 Open profile → Member Of tab\n1.4 Verify group: G-IT-RemoteAccess-Employee\n\nIf group NOT present:\n2.1 Raise AD Services request\n2.2 Ask manager to approve\n2.3 Wait 2 hours\n2.4 Retry VPN\n\nRestart workstation:\n3.1 Start → Power → Restart\n\nConnect VPN from login screen:\n4.1 CTRL + ALT + DEL\n4.2 Click network icon\n4.3 Launch VPN\n\nCheck device ID:\n5.1 At login screen type: .\\\n5.2 Verify hostname starts with TFC-\n\nIf not TFC-:\n→ Device reimage required\n\nLogin system\n\nClose VPN app:\n8.1 System tray → Right click → Quit\n\nShow hidden files:\n9.1 File Explorer → View → Show → Hidden\n\nNavigate:\nC:\\Users\\<ID>\\AppData\\Local\\Cisco\n\nDelete files:\n- Cisco HostScan\n- Cisco Secure Client\n\nRestart system\n\nConnect again`,
+    escalation: 'If device not TFC → reimage escalation\nIf persists → reinstall VPN\nWarm transfer to Ops'
+},
+{
+    error: 'Untrusted Server Blocked',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - untrusted server blocked',
+    steps: `Open VPN warning screen\nClick Settings (gear icon)\nDisable option:\n- Uncheck "Block connections to untrusted servers"\n\nReconnect VPN\nAccept certificate:\n- Always trust server\n- OR\n- Click Connect Anyway\n\nRestart system\nRepeat file cleanup steps (AppData deletion)\nRetry connection`,
+    escalation: 'If unresolved → reinstall VPN > check if TM able to visit any near office location\nEscalate to Ops with DSV info'
+},
+
+{
+    error: 'Connection timed out check internet connectivity',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - connection timed out',
+    steps: `Restart Router + Laptop (strict order)\n\nRun connectivity test:\n2.1 Open CMD\n2.2 Run: ping -t google.com\n2.3 Observe for 1 minute\n\nAnalyze results:\n- Request Timed Out → internet unstable\n- Reply → system issue\n\nIf unstable:\n4.1 Restart router again\n4.2 Try ethernet connection\n4.3 Try mobile hotspot\n\nRestart system again\n\nClose Cisco Secure Client\n\nDelete AppData files:\n- Cisco HostScan\n- Cisco Secure Client\n\nRestart system\n\nConnect VPN again`,
+    escalation: 'First time → inform user fix applied\nRepeated issue → escalate to Ops\nPersistent → VPN reinstall'
+},
+
+{
+    error: 'Failed contacting Truistweb.truist.com',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - failed contacting VPN server',
+    steps: `Restart Router + Laptop in order:\n1.1 Turn OFF router\n1.2 Turn OFF laptop\n1.3 Turn ON router → wait 3 minutes\n1.4 Turn ON laptop\n\nVerify internet:\n2.1 Open browser\n2.2 Access www.truist.com\n\nOpen Command Prompt:\n3.1 Press Win + R → type cmd\n\nRun commands one by one:\n4.1 ipconfig /release\n4.2 ipconfig /renew\n4.3 ipconfig /flushdns\n\nRestart system\n\nRun DNS check:\n6.1 nslookup truistweb.truist.com\n\nIf DNS fails:\n→ Contact ISP\n\nDelete Cisco files (repeat steps):\n8.1 Enable hidden files\n8.2 Navigate to AppData\\Local\\Cisco\n8.3 Delete HostScan & Secure Client\n\nRestart again\n\nTry VPN`,
+    escalation: 'If still unresolved → reinstall VPN\nIf ISP issue → user must contact provider'
+},
+
+{
+    error: 'Your environment does not meet the access criteria defined by your administrator',
+    short: 'Cisco Secure Client (VPN) - login / connection issues - environment criteria error',
+    steps: `Restart system:\n1.1 Start → Power → Restart\n\nConnect VPN before login:\n2.1 CTRL + ALT + DEL\n2.2 Click VPN icon\n2.3 Launch Cisco Secure Client\n\nLogin to system if needed\n\nClose Cisco Secure Client:\n4.1 System tray → Right click VPN → Quit\n\nEnable hidden files:\n5.1 Open File Explorer\n5.2 Click View → Show → Hidden items\n\nNavigate path:\nC:\\Users\\<UserID>\\AppData\\Local\\Cisco\n\nDelete files:\n- Cisco HostScan\n- Cisco Secure Client\n\nRestart system again\n\nConnect from login screen again\n\nRetry VPN URLs:\n- Truistweb.truist.com\n- Truistweb2.truist.com`,
+    escalation: 'If still fails → send for reinstall (Ops team)\nIf user cannot visit office → software escalation'
+},
+      
+    ],
+
+
+
+
+
+
+
+
+
+
     "Microsoft Teams": [
         {
             error: '"Your account is blocked"',
